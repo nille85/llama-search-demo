@@ -1,0 +1,32 @@
+version: '3'
+services:
+  mongodb:
+      container_name: llama-search-mongodb
+      image: mongodb/mongodb-community-server:6.0.4-ubi8
+      ports:
+        - 27017:27017
+      volumes:
+        - mongodb_llama_search_data:/data/db
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_PASSWORD=password
+      networks:
+        - backend
+  qdrant:
+    container_name: llama-search-qdrant
+    image: qdrant/qdrant
+    ports:
+      - 6333:6333
+    volumes:
+      - qdrant_llama_search_data:/qdrant/storage:z
+    networks:
+      - backend
+
+networks:
+  backend: 
+    name: llama-network
+
+volumes:
+  mongodb_llama_search_data:
+  qdrant_llama_search_data:
+
