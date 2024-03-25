@@ -21,6 +21,14 @@ services:
       - qdrant_llama_search_data:/qdrant/storage:z
     networks:
       - backend
+  plant-uml:
+    container_name: plant-uml-server
+    image: plantuml/plantuml-server:jetty
+    ports:
+      - 8090:8080
+    networks:
+      - backend
+
 
 networks:
   backend: 
