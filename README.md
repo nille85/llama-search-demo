@@ -6,7 +6,7 @@ Dependendencies for this project are managed using Poetry
 `poetry shell` opens up a shell where you can then run your python commands. 
 
 ## Configuration
-This uses `tomlkit``
+This uses `tomlkit`
 
 Add a file e.g. dev_config.toml with the following content. If you want to integrate with Notion, you can do so by passing your secret in the file.
 ```toml
@@ -31,6 +31,8 @@ There are some examples on how to load:
 *  a single PDF into a vector store
 * how to load all files from a directory
 * how you can load databases and pages from Notion.
+
+The examples loads the files from a directory `files` located in the root of this project. You can change this to your needs.
 
 `python app\loader.py`
 

@@ -1,0 +1,46 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam wrapWidth 300
+LAYOUT_WITH_LEGEND()
+LAYOUT_LANDSCAPE()
+
+title
+<b>FeedbackPublicationArch-simple v2022.11.02</b>
+<i>Feedback system: publication</i>
+end title
+
+System_Boundary(facebook, "Facebook") {
+   System_Ext(facebook_api, "Internal API")
+}
+ 
+System_Boundary(twitter, "Twitter") {
+  System_Ext(twitter_api, "Mobile Interface")
+}
+ 
+Person(operator, "User")
+ 
+System_Boundary(message_processing_system, "Message processing system") {
+  Container(amo_adapter, "AMO CRM Adapter", "Python 3.10, FastAPI", "Receive data for publication from AMO CRM and push it into message queue")
+  Container(feedback, "Feedback system form", "Python 3.8, Django 3, React", "Create responses, push responses into message queue")
+  SystemQueue(response_queue, "Kafka", "Publication responses")
+  Container(fb_publsher, "FB Publisher", "Python", "Publish responses on Facebook")
+  Container(tw_publsher, "TW Publisher", "Java, Selenium", "Publish responses on Twitter")
+  
+  Rel(feedback, response_queue, "Produce", "kafka")
+  Rel(amo_adapter, response_queue, "Produce", "kafka")
+  Rel(fb_publsher, response_queue, "Consume", "kafka")
+  Rel(tw_publsher, response_queue, "Consume", "kafka")
+  Rel(operator, feedback, "Response to publication", "Internal REST API")
+}
+ 
+System_Ext(amo, "AMO CRM", "Browse income messages, send responses")
+System_Ext(email, "Email")
+Person_Ext(amo_operator, "AMO CRM operator")
+
+Rel(amo_operator, amo, "Response to income messages")
+Rel(amo, email, "Send response to email")
+Rel_U(amo, amo_adapter, "Send response on Facebook and Twitter") 
+Rel_L(fb_publsher, facebook_api, "Publication", "HTTP")
+Rel_L(tw_publsher, twitter_api, "Publication", "HTTP")
+@enduml
