@@ -6,8 +6,17 @@ from llama_index.core import StorageContext
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.fastembed import FastEmbedEmbedding
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from app.translator import Translator
 
 
+def get_translator():
+    pretrained_model = "facebook/nllb-200-distilled-600M"
+    model = AutoModelForSeq2SeqLM.from_pretrained(pretrained_model)
+    tokenizer = AutoTokenizer.from_pretrained(pretrained_model)
+
+    return Translator(model, tokenizer)
 
 def get_configuration(config_file_path: str):
     with open(config_file_path, "r") as file:
@@ -17,8 +26,12 @@ def get_configuration(config_file_path: str):
 def get_embed_model():
     return FastEmbedEmbedding(model_name="BAAI/bge-base-en-v1.5")
 
+def get_sbert_embed_model():
+    return HuggingFaceEmbedding(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    
+
 def get_llm_model():
-    return Ollama(model="mistral", request_timeout=60.0)
+    return Ollama(model="mistral", request_timeout=120.0)
 
 def get_vector_database(url):
     db =  qdrant_client.QdrantClient(url)

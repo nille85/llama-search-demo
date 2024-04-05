@@ -28,7 +28,7 @@ You can access the qdrant dashboard [here](http://localhost:6333/dashboard)
 
 ## Loading Documents
 There are some examples on how to load:
-*  a single PDF into a vector store
+* a single PDF into a vector store
 * how to load all files from a directory
 * how you can load databases and pages from Notion.
 
