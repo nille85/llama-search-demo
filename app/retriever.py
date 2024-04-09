@@ -9,15 +9,17 @@ from llama_index.core.response_synthesizers.type import ResponseMode
 
 class Retriever:
 
-    def __init__(self, llm):
+    def __init__(self, llm, top_k = 5, similarity_cutoff = 0.5):
         self.llm = llm
+        self.top_k = top_k
+        self.similarity_cutoff = similarity_cutoff
 
     def query(self, index: VectorStoreIndex, query):
 
         # configure retriever
         retriever = VectorIndexRetriever(
             index=index,
-            similarity_top_k=5
+            similarity_top_k=self.top_k
         )
 
         # configure response synthesizer
@@ -29,7 +31,7 @@ class Retriever:
             retriever=retriever,
             response_synthesizer=response_synthesizer,
             response_mode=ResponseMode.SIMPLE_SUMMARIZE,
-            node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.5)],
+            node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=self.similarity_cutoff)],
             llm=self.llm
         )        
        
